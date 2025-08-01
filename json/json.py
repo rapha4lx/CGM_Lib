@@ -2,7 +2,7 @@ import json
 import os
 
 
-def load_emails(path='emails.json'):
+def load_json(path='emails.json'):
     if not os.path.exists('emails.json'):
         raise FileNotFoundError(f"File not found: {path}")
 
