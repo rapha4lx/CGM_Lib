@@ -16,7 +16,7 @@ def sendToSupport(to:str = "", message:str = ""):
     try:
         msg = MIMEMultipart()
         msg['From'] = EMAIL_LOGIN # type: ignore
-        msg['To'] = ', '.join(to)
+        msg['To'] = to
         msg['Subject'] = f"Bot - Resposta Automática" 
 
         msg.attach(MIMEText(message, 'plain', 'utf-8'))
