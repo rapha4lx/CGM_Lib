@@ -56,11 +56,7 @@ def send_question_context(model='gemini-2.0-flash-001', context=None, question=N
         frequency_penalty=frequency_penalty,
     )
 
-    response = client.models.generate_content(
-        model=model,
-        contents=question,
-        config=config,
-    )
+    return client.models.generate_content(model=model, contents=question, config=config)
 
 def send_advanced_question(model='gemini-2.0-flash-001', question=None, temperature=0, top_p=0.95,
                            top_k=20, candidate_count=1, seed=5, max_output_token=150, presence_penalty=0.0,
