@@ -14,7 +14,7 @@ def start_chat(system_instruction=None, model_name='gemini-2.0-flash-001'):
 
 def send_simple_question(model='gemini-2.0-flash-001', question=None, temperature=0, top_p=0.95,
                          top_k=20, candidate_count=1, seed=5, max_output_token=150, presence_penalty=0.0,
-                         frequency_penalty=0.0):
+                         frequency_penalty=0.0, thinking_budget=0):
     if question is None:
         print("Erro: the content of send_simple_question is None")
         return None
@@ -29,18 +29,19 @@ def send_simple_question(model='gemini-2.0-flash-001', question=None, temperatur
         stop_sequences=['STOP!'],
         presence_penalty=presence_penalty,
         frequency_penalty=frequency_penalty,
+        thinking_config=types.ThinkingConfig(thinking_budget=thinking_budget)
     )
 
     return client.models.generate_content(model=model, contents=question, config=config)
 
-def send_question_context(model='gemini-2.0-flash-001', context=None, question=None, temperature=0,
+def send_question_context(model='gemini-2.0-flash-001', system_instruction=None, question=None, temperature=0,
                           top_p=0.95, top_k=20, candidate_count=1, seed=5, max_output_token=150,
-                          presence_penalty=0.0, frequency_penalty=0.0):
+                          presence_penalty=0.0, frequency_penalty=0.0, thinking_budget=0) -> types.GenerateContentResponse: 
     if client is None:
         print("ERRO: Client not configured, Call the start_chat() function first")
         return None
 
-    if context is None or question is None:
+    if system_instruction is None or question is None:
         print("ERRO: context or question is None in send_question_context")
         return None
 
@@ -54,6 +55,8 @@ def send_question_context(model='gemini-2.0-flash-001', context=None, question=N
         stop_sequences=['STOP!'],
         presence_penalty=presence_penalty,
         frequency_penalty=frequency_penalty,
+        system_instruction=system_instruction,
+        thinking_config=types.ThinkingConfig(thinking_budget=thinking_budget)
     )
 
     return client.models.generate_content(model=model, contents=question, config=config)
