@@ -1,5 +1,4 @@
 import smtplib
-# import email
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.base import MIMEBase
@@ -12,12 +11,12 @@ def setCredentials(email_login: str, email_pass: str):
     EMAIL_LOGIN = email_login
     EMAIL_PASS = email_pass
 
-def sendToSupport(to:str = "", message:str = ""):
+def sendToSupport(to:str = "", message:str = "", assunto="Bot - Resposta Automática"):
     try:
         msg = MIMEMultipart()
         msg['From'] = EMAIL_LOGIN # type: ignore
         msg['To'] = to
-        msg['Subject'] = f"Bot - Resposta Automática" 
+        msg['Subject'] = assunto 
 
         msg.attach(MIMEText(message, 'plain', 'utf-8'))
         with smtplib.SMTP('smtp.gmail.com', 587) as smtp:
@@ -28,13 +27,13 @@ def sendToSupport(to:str = "", message:str = ""):
     except Exception as e:
         print(f"Erro ao enviar e-mail: {e}")
 
-def sendMsg(to:str = "", cc_emails:str = "", message=""):
+def sendMsg(to:str = "", cc_emails:str = "", message="", assunto= "Bot - Resposta Automática"):
     try:
         msg = MIMEMultipart()
         msg['From'] = EMAIL_LOGIN # type: ignore
         msg['To'] = to
         msg['Cc'] = cc_emails
-        msg['Subject'] = f"Bot - Resposta Automática" 
+        msg['Subject'] = assunto
 
         msg.attach(MIMEText(message, 'plain', 'utf-8'))
         with smtplib.SMTP('smtp.gmail.com', 587) as smtp:
@@ -46,13 +45,13 @@ def sendMsg(to:str = "", cc_emails:str = "", message=""):
     except Exception as e:
         print(f"Erro ao enviar e-mail: {e}")
 
-def sendWithFile(to: str, cc_emails: str = "", subject ="Resposta Automatica", file='path', trying:int = 3):
+def sendWithFile(to: str, cc_emails: str = "", assunto= "Bot - Resposta Automática", file='path', trying:int = 3):
     try:
         msg = MIMEMultipart()
         msg['From'] = EMAIL_LOGIN # type: ignore
         msg['To'] = to
         msg['Cc'] = cc_emails
-        msg['Subject'] = subject
+        msg['Subject'] = assunto
 
         if (trying <= 0):
             return sendMsg(to, cc_emails, "Você atingiu o limite de tentativas para enviar o e-mail. Por favor, tente novamente mais tarde.")
@@ -83,7 +82,7 @@ def sendWithFile(to: str, cc_emails: str = "", subject ="Resposta Automatica", f
             print(f"Erro ao enviar e-mail: {e}")
             if trying > 0:
                 print(f"Tentando novamente... ({trying} tentativas restantes)")
-                return sendWithFile(to, cc_emails, subject, file, trying - 1)
+                return sendWithFile(to, cc_emails, assunto, file, trying - 1)
             else:
                 sendToSupport(cc_emails, "Erro ao enviar e-mail -> Except -> SMTPServerDisconnected \n" + str(e))
                 sendMsg(to, cc_emails, "Ocorreu um erro ao enviar o e-mail. Por favor, tente novamente mais tarde.")
@@ -91,7 +90,7 @@ def sendWithFile(to: str, cc_emails: str = "", subject ="Resposta Automatica", f
             print(f"Erro ao enviar e-mail: {e}")
             if trying > 0:
                 print(f"Tentando novamente... ({trying} tentativas restantes)")
-                return sendWithFile(to, cc_emails, subject, file, trying - 1)
+                return sendWithFile(to, cc_emails, assunto, file, trying - 1)
             else:
                 sendToSupport(cc_emails, "Erro ao enviar e-mail -> Except -> SMTPException \n" + str(e))
                 sendMsg(to, cc_emails, "Ocorreu um erro ao enviar o e-mail. Por favor, tente novamente mais tarde.")
