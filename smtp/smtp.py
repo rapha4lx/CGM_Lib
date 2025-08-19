@@ -11,11 +11,21 @@ def setCredentials(email_login: str, email_pass: str):
     EMAIL_LOGIN = email_login
     EMAIL_PASS = email_pass
 
-def sendToSupport(to:str = "", message:str = "", assunto="Bot - Resposta Automática"):
+def setSupportEmails(emails: list[str]):
+    global SUPPORT_EMAILS
+    SUPPORT_EMAILS = ", ".join(emails)
+
+def getSupportEmails() -> str:
+    return SUPPORT_EMAILS if 'SUPPORT_EMAILS' in globals() else ""
+
+def sendToSupport(message:str = "", assunto="Bot - Resposta Automática"):
+    if not getSupportEmails():
+        print("Nenhum e-mail de suporte configurado.")
+        return
     try:
         msg = MIMEMultipart()
         msg['From'] = EMAIL_LOGIN # type: ignore
-        msg['To'] = to
+        msg['To'] = getSupportEmails()
         msg['Subject'] = assunto 
 
         msg.attach(MIMEText(message, 'plain', 'utf-8'))
@@ -44,6 +54,7 @@ def sendMsg(to:str = "", cc_emails:str = "", message="", assunto= "Bot - Respost
 
     except Exception as e:
         print(f"Erro ao enviar e-mail: {e}")
+        raise e
 
 def sendWithFile(to: str, cc_emails: str = "", assunto= "Bot - Resposta Automática", file='path', trying:int = 3):
     try:
